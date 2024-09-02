@@ -1,0 +1,13 @@
+# Target labels
+ bootloader
+# Source files and their labels
+C:/Biostim/GMS/GMS_SHOW/build/CMakeFiles/bootloader
+C:/Biostim/GMS/GMS_SHOW/build/CMakeFiles/bootloader.rule
+C:/Biostim/GMS/GMS_SHOW/build/CMakeFiles/bootloader-complete.rule
+C:/Biostim/GMS/GMS_SHOW/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule
+C:/Biostim/GMS/GMS_SHOW/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
+C:/Biostim/GMS/GMS_SHOW/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
+C:/Biostim/GMS/GMS_SHOW/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
+C:/Biostim/GMS/GMS_SHOW/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
+C:/Biostim/GMS/GMS_SHOW/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
+C:/Biostim/GMS/GMS_SHOW/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule
