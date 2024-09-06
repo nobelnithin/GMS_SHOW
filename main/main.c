@@ -66,8 +66,8 @@ xQueueHandle CH2Queue;
 bool isDisp_menu;
 bool ok_btn=true;
 bool isDisp_setup;
-bool ch1_flag;
-bool ch2_flag;
+bool CH1_flag =true;
+bool CH2_flag =true;
 int level ;
 int disp_strenght = 0;
 
@@ -77,8 +77,8 @@ uint32_t pre_time_up = 0;
 uint32_t pre_time_down = 0;
 uint32_t pre_time_pwr = 0;
 uint32_t pre_time_ok = 0;
-uint32_t pre_time_ch1 = 0;
-uint32_t pre_time_ch2 = 0;
+uint64_t pre_time_CH1 = 0;
+uint64_t pre_time_CH2 = 0;
 uint64_t intr_time = 0;
 uint64_t curr_time = 0;
 bool long_press_detected = false;
@@ -141,12 +141,12 @@ void disp_menu()
     // ssd1306_bitmaps(&dev, 3, 3, channel1, 32,17 , false);
     // ssd1306_bitmaps(&dev, 20, 3, channel2, 36, 17, false);
     ssd1306_display_text(&dev, 4, " Setup Mode     ", 17, true);
-    if(ch2_flag)
+    if(!CH2_flag)
     {
         ssd1306_display_text(&dev, 1, "    ", 5, false);
         ssd1306_display_text(&dev, 1, " CH2", 5, false);
     }
-    if(ch1_flag)
+    if(!CH1_flag)
     {
         ssd1306_display_text(&dev, 1, "    ", 5, false);
         ssd1306_display_text(&dev, 1, " CH1", 5, false);
@@ -194,8 +194,8 @@ void STIMTask(void *params)
         {
                 // ets_printf("Driver on, strength set : %d \n", STIMStrength[freq_list_index]);
                 // ESP_LOGI("NO TAG ","Driver on, strength set : %d \n", STIMStrength[freq_list_index]);
-                printf("Simulation strength: %d\n",STIMStrength[disp_strenght]);
-            if(ch1_flag)
+            printf("Simulation strength: %d\n",STIMStrength[disp_strenght]);
+            if(!CH1_flag)
             {
                 for(int i= 0;i<20;i++)
                 {
@@ -204,15 +204,17 @@ void STIMTask(void *params)
                     gpio_set_level(IN2, 0);
                     ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, STIMStrength[disp_strenght]));
                     ESP_ERROR_CHECK(ledc_update_duty(LEDC_MODE, LEDC_CHANNEL));
-                    vTaskDelay(10 / portTICK_PERIOD_MS);
+                    printf("Simulation strength: UP\n");
+                    vTaskDelay(2000 / portTICK_PERIOD_MS);
                     gpio_set_level(IN1, 0);
-                    gpio_set_level(IN2, 1);             
-                    vTaskDelay(10 / portTICK_PERIOD_MS);
+                    gpio_set_level(IN2, 1);       
+                    printf("Simulation strength: DOWN\n");      
+                    vTaskDelay(2000 / portTICK_PERIOD_MS);
                     ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, 0));
                     ESP_ERROR_CHECK(ledc_update_duty(LEDC_MODE, LEDC_CHANNEL));
                     gpio_set_level(IN1, 0);
                     gpio_set_level(IN2, 0);
-                    vTaskDelay(12 / portTICK_PERIOD_MS);
+                    vTaskDelay(2000 / portTICK_PERIOD_MS);
                     
     
                 }
@@ -221,7 +223,7 @@ void STIMTask(void *params)
             }
 
 
-            if(ch2_flag)
+            if(!CH2_flag)
             {
                 for(int i= 0;i<20;i++)
                 {
@@ -230,15 +232,15 @@ void STIMTask(void *params)
                     gpio_set_level(IN4, 0);
                     ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, STIMStrength[disp_strenght]));
                     ESP_ERROR_CHECK(ledc_update_duty(LEDC_MODE, LEDC_CHANNEL));
-                    vTaskDelay(10 / portTICK_PERIOD_MS);
+                    vTaskDelay(2000 / portTICK_PERIOD_MS);
                     gpio_set_level(IN3, 0);
                     gpio_set_level(IN4, 1);             
-                    vTaskDelay(10 / portTICK_PERIOD_MS);
+                    vTaskDelay(2000 / portTICK_PERIOD_MS);
                     ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, 0));
                     ESP_ERROR_CHECK(ledc_update_duty(LEDC_MODE, LEDC_CHANNEL));
                     gpio_set_level(IN3, 0);
                     gpio_set_level(IN4, 0);
-                    vTaskDelay(12 / portTICK_PERIOD_MS);
+                    vTaskDelay(2000 / portTICK_PERIOD_MS);
                     
     
                 }
@@ -257,7 +259,7 @@ void STIMTask(void *params)
                 vTaskDelay(2000 / portTICK_PERIOD_MS);
 
         }
-        if(isDisp_setup==0){
+        if(!isDisp_setup){
             ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, 0));
             ESP_ERROR_CHECK(ledc_update_duty(LEDC_MODE, LEDC_CHANNEL));
 
@@ -266,7 +268,7 @@ void STIMTask(void *params)
     }
 }
 
-void CH1Task(void *param)
+void CH1Task(void *params)
 {
     gpio_set_direction(CH1, GPIO_MODE_INPUT);
     gpio_set_intr_type(CH1, GPIO_INTR_POSEDGE);
@@ -275,36 +277,46 @@ void CH1Task(void *param)
     {
         if (xQueueReceive(CH1Queue, &BTN_NUMBER, portMAX_DELAY))
         {
-            printf("Channel 1\n");
-            ch1_flag = true;
-            ch2_flag = false;
+            
+            if(CH1_flag)
+            {
+                printf("pluged IN 1....!\n");
+                CH2_flag=true;
+                CH1_flag=false;
+                disp_menu();
+            }
+
             xQueueReset(CH1Queue);
         }
-        vTaskDelay(250/portTICK_PERIOD_MS);
+        vTaskDelay(100/portTICK_PERIOD_MS);
     }
 }
 
 
-void CH2Task(void *param)
+void CH2Task(void *params)
 {
     gpio_set_direction(CH2, GPIO_MODE_INPUT);
     gpio_set_intr_type(CH2, GPIO_INTR_POSEDGE);
     int BTN_NUMBER = 0;
     while (1)
     {
-        level = gpio_get_level(CH2);
         if (xQueueReceive(CH2Queue, &BTN_NUMBER, portMAX_DELAY))
         {
-            printf("Channel 2\n");
-            ch1_flag = false;
-            ch2_flag = true;           
+            
+            
+            if(CH2_flag)
+            {
+                printf("pluged IN 2....!\n");
+                CH2_flag=false;
+                CH1_flag=true;
+                disp_menu();
+            }
 
             xQueueReset(CH2Queue);
         }
-        vTaskDelay(250/portTICK_PERIOD_MS);
+        vTaskDelay(100/portTICK_PERIOD_MS);
     }
 }
-
 
 void BTN_PLUSTask(void *param)
 {
@@ -458,29 +470,22 @@ void BTN_OKTask(void *params)
 
 static void IRAM_ATTR CH1_interrupt_handler(void *args)
 {
-    
     int pinNumber = (int)args;
-    if(esp_timer_get_time() - pre_time_ch1 > 500000)
-    {
-        xQueueSendFromISR(CH1Queue, &pinNumber, NULL);
-
+    if(esp_timer_get_time() - pre_time_CH1 > 400000){
+    xQueueSendFromISR(CH1Queue, &pinNumber, NULL);
     }
-    pre_time_ch1= esp_timer_get_time();
+    pre_time_CH1 = esp_timer_get_time();
+
 }
 
 static void IRAM_ATTR CH2_interrupt_handler(void *args)
 {
-    
     int pinNumber = (int)args;
-    if(esp_timer_get_time() - pre_time_ch2> 500000)
-    {
-
-            xQueueSendFromISR(CH2Queue, &pinNumber, NULL);
- 
-        
-
+    if(esp_timer_get_time() - pre_time_CH2 > 400000){
+    xQueueSendFromISR(CH2Queue, &pinNumber, NULL);
     }
-    pre_time_ch1= esp_timer_get_time();
+    pre_time_CH2 = esp_timer_get_time();
+
 }
 
 static void IRAM_ATTR BTN_PLUS_interrupt_handler(void *args)
@@ -585,7 +590,7 @@ void app_main(void)
     xTaskCreate(BTN_PWRTask, "BTN_PWRTask", 2048, NULL, 1, NULL);
     xTaskCreate(BTN_OKTask, "BTN_OKTask", 8000, NULL, 1, NULL);
     xTaskCreate(CH1Task, "CH1Task", 8000, NULL, 1, NULL);
-    xTaskCreate(CH2Task, "CH2Task", 8000, NULL, 1, NULL);
+    xTaskCreate(CH2Task, "CH2 Task", 8000, NULL, 1, NULL);
     xTaskCreate(STIMTask, "STIMTask", 8000, NULL, 1, NULL);
 
     display_logo();
