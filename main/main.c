@@ -205,16 +205,16 @@ void STIMTask(void *params)
                     ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, STIMStrength[disp_strenght]));
                     ESP_ERROR_CHECK(ledc_update_duty(LEDC_MODE, LEDC_CHANNEL));
                     printf("Simulation strength: UP\n");
-                    vTaskDelay(2000 / portTICK_PERIOD_MS);
+                    vTaskDelay(10 / portTICK_PERIOD_MS);
                     gpio_set_level(IN1, 0);
                     gpio_set_level(IN2, 1);       
                     printf("Simulation strength: DOWN\n");      
-                    vTaskDelay(2000 / portTICK_PERIOD_MS);
+                    vTaskDelay(10 / portTICK_PERIOD_MS);
                     ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, 0));
                     ESP_ERROR_CHECK(ledc_update_duty(LEDC_MODE, LEDC_CHANNEL));
                     gpio_set_level(IN1, 0);
                     gpio_set_level(IN2, 0);
-                    vTaskDelay(2000 / portTICK_PERIOD_MS);
+                    vTaskDelay(10 / portTICK_PERIOD_MS);
                     
     
                 }
@@ -232,15 +232,15 @@ void STIMTask(void *params)
                     gpio_set_level(IN4, 0);
                     ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, STIMStrength[disp_strenght]));
                     ESP_ERROR_CHECK(ledc_update_duty(LEDC_MODE, LEDC_CHANNEL));
-                    vTaskDelay(2000 / portTICK_PERIOD_MS);
+                    vTaskDelay(10 / portTICK_PERIOD_MS);
                     gpio_set_level(IN3, 0);
                     gpio_set_level(IN4, 1);             
-                    vTaskDelay(2000 / portTICK_PERIOD_MS);
+                    vTaskDelay(10 / portTICK_PERIOD_MS);
                     ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, 0));
                     ESP_ERROR_CHECK(ledc_update_duty(LEDC_MODE, LEDC_CHANNEL));
                     gpio_set_level(IN3, 0);
                     gpio_set_level(IN4, 0);
-                    vTaskDelay(2000 / portTICK_PERIOD_MS);
+                    vTaskDelay(10 / portTICK_PERIOD_MS);
                     
     
                 }
